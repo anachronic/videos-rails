@@ -1,6 +1,6 @@
 class Api::V1::VideosController < ApplicationController
   before_action :set_videos, only: [:index]
-  before_action :set_video, only: [:show]
+  before_action :set_video, only: [:show, :destroy, :update]
 
   def index
   end
@@ -10,6 +10,14 @@ class Api::V1::VideosController < ApplicationController
 
   def create
     @video = Video.create! video_params
+  end
+
+  def destroy
+    @video.destroy!
+  end
+
+  def update
+    @video.update! video_params
   end
 
   private
