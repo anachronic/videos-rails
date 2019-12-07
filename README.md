@@ -1,24 +1,10 @@
-# README
+# RO Videos backend app [![Build Status](https://travis-ci.org/anachronic/videos-rails.svg?branch=master)](https://travis-ci.org/anachronic/videos-rails) [![Coverage Status](https://coveralls.io/repos/github/anachronic/videos-rails/badge.svg?branch=ci)](https://coveralls.io/github/anachronic/videos-rails?branch=ci)
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This is a simple Rails app that stores videos. It's a toy project where I intend
+to share some old RO videos.
 
-Things you may want to cover:
+It uses ActiveStorage for storing videos.
 
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+The objective of this app is, rather than uploading my videos to YouTube, learn
+some rails and at the same time, publish these old videos. Maybe someone wants
+to see them!
