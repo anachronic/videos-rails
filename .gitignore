@@ -28,3 +28,6 @@
 
 # Coverage
 /coverage
+
+# Annoying macOS files
+.DS_Store
