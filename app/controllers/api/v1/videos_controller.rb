@@ -1,4 +1,5 @@
 class Api::V1::VideosController < ApiController
+  before_action :authenticate_admin!, only: [:destroy, :update, :create]
   before_action :set_videos, only: [:index]
   before_action :set_video, only: [:show, :destroy, :update]
 
