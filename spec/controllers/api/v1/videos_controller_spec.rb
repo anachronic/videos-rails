@@ -63,6 +63,8 @@ RSpec.describe Api::V1::VideosController, type: :controller do
 
   describe '#create' do
     it 'Creates a new video with a file attachment' do
+      sign_in FactoryBot.create(:admin)
+
       params = {
         name: 'A new video',
         file: image
@@ -78,17 +80,30 @@ RSpec.describe Api::V1::VideosController, type: :controller do
     end
 
     it 'Fails to create a new video with no params' do
+      sign_in FactoryBot.create(:admin)
       params = {}
 
       expect {
         post :create, { params: params, format: :json }
       }.to raise_error(ActiveRecord::RecordInvalid)
     end
+
+    it 'Fails to create a new video for unauthenticated user' do
+      params = {
+        name: 'New video',
+        file: image
+      }
+
+      post :create, { params: params, format: :json }
+      
+      expect(response).to have_http_status(401)
+    end
   end
 
   describe '#destroy' do
     it 'Correctly destroys an existing video' do
-      video = Video.create!(name: 'Destroy me', file: image)
+      sign_in FactoryBot.create(:admin)
+      video = FactoryBot.create(:video, :with_image)
       
       expect{
         delete :destroy, params: { id: video.id, format: :json}
@@ -98,34 +113,52 @@ RSpec.describe Api::V1::VideosController, type: :controller do
     end
 
     it 'Fails to destroy a non-existing video' do
+      sign_in FactoryBot.create(:admin)
       expect {
         delete :destroy, params: { id: -1, format: :json }
       }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+
+    it 'Fails to destroy a video if no admin is authenticated' do
+      video = FactoryBot.create(:video, :with_image)
+
+      delete :destroy, params: { id: video.id }
+      expect(response).to have_http_status(401)
     end
   end
 
   describe '#update' do
     it 'Fails to update a non-existing video' do
+      sign_in FactoryBot.create(:admin)
       expect {
         patch :update, params: { id: -1, format: :json }
       }.to raise_error(ActiveRecord::RecordNotFound)
     end
 
     it 'Succeeds to update an existing video with correct params' do
-      video = Video.create!(name: 'Edit me', file: image)
+      video = FactoryBot.create(:video, :with_image)
 
+      sign_in FactoryBot.create(:admin)
       patch :update, params: { id: video.id, name: 'Edited you', format: :json }
       expect(response).to have_http_status(200)
     end
 
     it 'Ignores foreign params when updating' do
-      video = Video.create!(name: 'Edit me', file: image)
+      video = FactoryBot.create(:video, :with_image)
 
+      sign_in FactoryBot.create(:admin)
       patch :update, params: { id: video.id, something_else: 'You shall not pass', format: :json }
       expect(response).to have_http_status(200)
 
       body = JSON.parse(response.body)
       expect(body.keys).to contain_exactly('name', 'url', 'id')
+    end
+
+    it 'Fails to update a video if no admin is authenticated' do
+      video = FactoryBot.create(:video, :with_image)
+
+      patch :update, params: { id: video.id, name: 'Edited you', format: :json }
+      expect(response).to have_http_status(401)
     end
   end
 end
